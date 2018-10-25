@@ -1,6 +1,7 @@
-from keras.layers import Dense, Flatten
+from keras.layers import Dense, Flatten, Dropout
 from keras.models import Sequential
 from keras.callbacks import Callback
+from keras.layers.convolutional import Convolution2D, MaxPooling2D, ZeroPadding2D
 import pandas as pd
 import numpy as np
 import cv2
@@ -53,7 +54,25 @@ train_faces /= 255.
 val_faces /= 255.
 
 model = Sequential()
-model.add(Flatten(input_shape=input_shape))
+model.add(ZeroPadding2D((1,1),input_shape=(48,48,1)))
+model.add(Convolution2D(32,3,3,activation='relu'))
+model.add(MaxPooling2D(pool_size=(2, 2)))
+model.add(Dropout(0.4))
+
+# model.add(ZeroPadding2D((1,1)))
+model.add(Convolution2D(64,3,3,activation='relu'))
+model.add(MaxPooling2D(pool_size=(2, 2)))
+model.add(Dropout(0.4))
+
+# model.add(ZeroPadding2D((1,1)))
+model.add(Convolution2D(128,3,3,activation='relu'))
+model.add(MaxPooling2D(pool_size=(2, 2)))
+
+model.add(Flatten())
+# model.add(Dense(num_classes, activation="relu"))
+model.add(Dropout(0.5))
+# model.add(Dense(num_classes, activation="relu"))
+# model.add(Dropout(0.5))
 model.add(Dense(num_classes, activation="softmax"))
 
 model.compile(optimizer='adam', loss='categorical_crossentropy',
